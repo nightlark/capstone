@@ -114,6 +114,7 @@ MAKE="$MAKE -j${MAKE_JOBS}"
 TARGET="$1"
 [ $# -gt 0 ] && shift
 
+echo "LIBARCHS in make.sh = $LIBARCHS"
 case "$TARGET" in
   "" | "default" ) ${MAKE} "$@";;
   "debug" ) \

@@ -14,6 +14,8 @@ LIBARCHS ?= x86_64 arm64
 PREFIX ?= /usr/local
 endif
 
+$(info LIBARCHS is $(LIBARCHS))
+
 ifeq ($(PKG_EXTRA),)
 PKG_VERSION = $(PKG_MAJOR).$(PKG_MINOR)
 else
@@ -345,6 +347,7 @@ API_MAJOR=$(shell echo `grep -e CS_API_MAJOR include/capstone/capstone.h | grep 
 VERSION_EXT =
 
 IS_APPLE := $(shell $(CC) -dM -E - < /dev/null 2> /dev/null | grep __apple_build_version__ | wc -l | tr -d " ")
+$(info Apple CC is $(CC))
 ifeq ($(IS_APPLE),1)
 # on MacOS, do not build in Universal format by default
 MACOS_UNIVERSAL ?= no
@@ -352,6 +355,8 @@ ifeq ($(MACOS_UNIVERSAL),yes)
 CFLAGS += $(foreach arch,$(LIBARCHS),-arch $(arch))
 LDFLAGS += $(foreach arch,$(LIBARCHS),-arch $(arch))
 endif
+$(info CFLAGS is $(CFLAGS))
+$(info LDFLAGS is $(LDFLAGS))
 EXT = dylib
 VERSION_EXT = $(API_MAJOR).$(EXT)
 $(LIBNAME)_LDFLAGS += -dynamiclib -install_name lib$(LIBNAME).$(VERSION_EXT) -current_version $(PKG_MAJOR).$(PKG_MINOR).$(PKG_EXTRA) -compatibility_version $(PKG_MAJOR).$(PKG_MINOR)

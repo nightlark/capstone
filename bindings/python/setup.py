@@ -145,7 +145,15 @@ def build_libraries():
         # Only build capstone.dll
         os.system('cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DCAPSTONE_BUILD_TESTS=OFF -DCAPSTONE_BUILD_CSTOOL=OFF -G "NMake Makefiles" ..')
         os.system("cmake --build .")
+    elif SYSTEM == "darwin" and os.environ.get("ARCHFLAGS"):
+        log.info("handling darwin ARCHFLAGS")
+        log.info(os.environ)
+        # macOS build under cibuildwheel has ARCHFLAGS set to architectures that should be built
+        archflags = set(os.environ.get("ARCHFLAGS").split()) & {"x86_64", "arm64"}
+        os.system("LIBARCHS={LIBARCHS} CAPSTONE_BUILD_CORE_ONLY=yes bash ./make.sh mac-universal".format(LIBARCHS=" ".join(archflags)))
     else:  # Unix incl. cygwin
+        log.info("handling UNIX catch-all case")
+        log.info(os.environ)
         os.system("CAPSTONE_BUILD_CORE_ONLY=yes bash ./make.sh")
 
     shutil.copy(VERSIONED_LIBRARY_FILE, os.path.join(LIBS_DIR, LIBRARY_FILE))
